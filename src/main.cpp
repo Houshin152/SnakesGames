@@ -30,7 +30,7 @@ Clock moveclock;//设置计时器
 //生成食物
 auto generateFood = [&]()
 {
-  if (snakePosition.size() >= 12000)//蛇已经占满格子
+  if (snakePosition.size() >= 1200)//蛇已经占满格子
 {
   return false;
 }
@@ -50,6 +50,8 @@ auto generateFood = [&]()
   }
   return true;
 };
+        bool isDead = false;
+        bool gamewin = false;
 while (window.isOpen())//设置Game Loop
  {
    while(const optional event = window.pollEvent())//处理所有待处理事件
@@ -88,21 +90,45 @@ while (window.isOpen())//设置Game Loop
            }
    }
         //蛇的自动移动
-        if(moveclock.getElapsedTime() >= milliseconds(150))
+        if(isDead == false && gamewin == false && moveclock.getElapsedTime() >= milliseconds(150))
         {
           moveclock.restart();//重置计时器
           Vector2i newhead = snakePosition[0] + direction;//计算新的蛇的位置
-          if(newhead == foodPosition)
-          {//吃到了食物
-             if(generateFood() == false)
+          bool eatFood = (newhead == foodPosition);
+          if(newhead.x>39||newhead.x<0||newhead.y>29||newhead.y<0)//蛇到了边界外
              {
-              //游戏结束
+              isDead = true;
+             }
+          for(auto p = snakePosition.begin();p!=snakePosition.end();p++)//蛇撞到蛇身
+          {
+             if(*p == newhead)
+             {
+              if(p != snakePosition.end()-1 || eatFood == true)
+              {
+                isDead = true;
+              }
              }
           }
-          else{//没有吃到食物
-          snakePosition.pop_back();//删除蛇尾
+           if(isDead == true)//判断蛇是否碰撞死亡
+          {
+            //游戏结束
           }
-          snakePosition.insert(snakePosition.begin(),newhead);//新蛇头插入头部
+           else
+          {
+            if(eatFood == false)
+           {
+            snakePosition.pop_back();//删除蛇尾
+           }
+           snakePosition.insert(snakePosition.begin(),newhead);//新蛇头插入头部
+            if(eatFood == true&&generateFood() == false)//蛇身占满棋盘，游戏胜利
+           {
+              gamewin = true;
+           }
+          }
+          if(gamewin == true)//判断游戏是否胜利
+          {
+            //游戏结束
+          }
         }
         //清屏，以显示下一次内容
         window.clear(Color::Black);
@@ -127,7 +153,6 @@ while (window.isOpen())//设置Game Loop
         snakeCell.setPosition(Vector2f(snakePosition[i].x*20.f,snakePosition[i].y*20.f));
         window.draw(snakeCell);
        }
-       Vector2i moveDirection = {1,0};
        RectangleShape foodCell(Vector2f(18.f,18.f));
        foodCell.setFillColor(Color::Red);  // 食物格子
        foodCell.setPosition(Vector2f(foodPosition.x*20.f,foodPosition.y*20.f));
