@@ -1,0 +1,24 @@
+{
+  "name": "snakegame",
+  "version": "1.0.0",
+  "description": "这是一个用cpp写的贪吃蛇的项目，作为新手的第一个项目\r 该项目运行在windows端\r 操作系统：windows11\r 编程语言：cpp,html,css,javascript\r 开发工具：vscode\r 编译器：gcc\r 版本管理：git\r ---\r ）-\r ### **功能模块：**",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Houshin152/SnakesGames.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Houshin152/SnakesGames/issues"
+  },
+  "homepage": "https://github.com/Houshin152/SnakesGames#readme",
+  "devDependencies": {
+    "electron": "^45.2.3"
+  }
+}

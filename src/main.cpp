@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <random>
+#include <iostream>
 using namespace std;
 using namespace sf;
 bool canChangeDirection(Vector2i Nowdirection,Vector2i Newdirection)//判断是否可以转
@@ -18,6 +19,7 @@ RenderWindow window(//设置游戏窗口
     "Snake Game"
 );
 vector<Vector2i>snakePosition = {{20,15},{19,15},{18,15}};//初始化蛇的位置
+int score = 0;//初始化分数
 
 random_device rdplace;//调用随机数
 mt19937 gen(rdplace());
@@ -111,7 +113,8 @@ while (window.isOpen())//设置Game Loop
           }
            if(isDead == true)//判断蛇是否碰撞死亡
           {
-            //游戏结束
+             cout << "GAME_OVER:" << score << endl;
+             window.close();
           }
            else
           {
@@ -120,6 +123,10 @@ while (window.isOpen())//设置Game Loop
             snakePosition.pop_back();//删除蛇尾
            }
            snakePosition.insert(snakePosition.begin(),newhead);//新蛇头插入头部
+           if(eatFood == true)
+           {
+              score = score + 10;
+           }
             if(eatFood == true&&generateFood() == false)//蛇身占满棋盘，游戏胜利
            {
               gamewin = true;
