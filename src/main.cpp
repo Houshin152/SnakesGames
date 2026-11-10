@@ -13,13 +13,42 @@ bool canChangeDirection(Vector2i Nowdirection,Vector2i Newdirection)//判断是�
        }
        return true;
 }
-int main(){
+int main(int argc,char* argv[]){
 RenderWindow window(//设置游戏窗口
-    VideoMode({800,600}),
+    VideoMode({1040,600}),
     "Snake Game"
 );
+//计分版
+sf::Font font;
+if(font.openFromFile("C:/Windows/Fonts/arial.ttf")==false)
+{
+  cout<<"字体加载失败"<<endl;
+}
+sf::Text scoreText(font);
+scoreText.setCharacterSize(40);
+scoreText.setFillColor(sf::Color(94,204,255));
+scoreText.setPosition({870.f, 115.f});
+sf::Text scoreTitle(font);
+scoreTitle.setString("SCORE");
+scoreTitle.setCharacterSize(22);
+scoreTitle.setFillColor(sf::Color::White);
+scoreTitle.setPosition({870.f,70.f});
+sf::Text bestScoreTitle(font);
+bestScoreTitle.setPosition({920.f, 300.f});
+bestScoreTitle.setString("BEST SCORE");
+bestScoreTitle.setCharacterSize(22);
+bestScoreTitle.setFillColor(sf::Color::White);
+sf::Text bestScoreText(font);
+bestScoreText.setPosition({920.f, 300.f});
+bestScoreText.setCharacterSize(40);
+bestScoreText.setFillColor(sf::Color(255,182,193));
+
 vector<Vector2i>snakePosition = {{20,15},{19,15},{18,15}};//初始化蛇的位置
 int score = 0;//初始化分数
+int bestScore = 0;//最高分数
+if (argc > 1) {
+    bestScore = stoi(argv[1]);
+}
 
 random_device rdplace;//调用随机数
 mt19937 gen(rdplace());
@@ -139,6 +168,52 @@ while (window.isOpen())//设置Game Loop
         }
         //清屏，以显示下一次内容
         window.clear(Color::Black);
+        //绘制计分板
+        sf::RectangleShape scorePanel({240.f,600.f});
+        scorePanel.setPosition({800.f,0.f});
+        scorePanel.setFillColor(sf::Color(38,52,73));
+        window.draw(scorePanel);
+        //实时记录分数和最高分数
+        if(score > bestScore)
+       {
+            bestScore = score;
+       }
+        scoreText.setString(std::to_string(score));
+        sf::FloatRect titleBounds = scoreTitle.getLocalBounds();
+        sf::FloatRect scoreBounds = scoreText.getLocalBounds();
+        scoreTitle.setOrigin({
+           titleBounds.position.x + titleBounds.size.x / 2.f,
+           titleBounds.position.y + titleBounds.size.y / 2.f
+        });
+
+         scoreText.setOrigin({
+           scoreBounds.position.x + scoreBounds.size.x / 2.f,
+           scoreBounds.position.y + scoreBounds.size.y / 2.f
+        });
+
+        scoreTitle.setPosition({920.f, 85.f});
+        scoreText.setPosition({920.f, 145.f});
+
+
+        bestScoreText.setString(std::to_string(bestScore));
+        sf::FloatRect bestTitleBounds = bestScoreTitle.getLocalBounds();
+        sf::FloatRect bestTextBounds = bestScoreText.getLocalBounds();
+        bestScoreTitle.setOrigin({
+            bestTitleBounds.position.x + bestTitleBounds.size.x / 2.f,
+            bestTitleBounds.position.y + bestTitleBounds.size.y / 2.f
+        });
+
+        bestScoreText.setOrigin({
+            bestTextBounds.position.x + bestTextBounds.size.x / 2.f,
+            bestTextBounds.position.y + bestTextBounds.size.y / 2.f
+        });
+        bestScoreTitle.setPosition({920.f, 255.f});
+        bestScoreText.setPosition({920.f, 315.f});
+
+        window.draw(scoreTitle);
+        window.draw(scoreText);
+        window.draw(bestScoreTitle);
+        window.draw(bestScoreText);
         //设置棋盘
        RectangleShape wallcell(Vector2f(18.f,18.f));//背景创造格子
        wallcell.setFillColor(Color::Green);
