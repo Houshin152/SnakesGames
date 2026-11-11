@@ -6,6 +6,9 @@ const { spawn } = require("child_process");
 const { BrowserWindow,app,ipcMain } = require("electron");
 const fs = require("fs");
 const path = require("path");
+const gameExePath = app.isPackaged
+    ? path.join(process.resourcesPath, "game", "SnakeGame.exe")
+    : path.join(__dirname, "build", "SnakeGame.exe");
 function loadBestScore() {
 try{
     if (fs.existsSync(scoreFile) == false) {
@@ -41,7 +44,7 @@ app.whenReady().then(() => {
     height: 900,
     webPreferences: {
         contextIsolation: true,
-        preload: __dirname + "/preload.js"
+        preload: path.join(__dirname, "preload.js")
     }
    });
 
@@ -49,7 +52,7 @@ app.whenReady().then(() => {
    mainWindow.webContents.on("did-finish-load", () => {
     mainWindow.webContents.send("initial-best-score", bestScore);
 });
-mainWindow.loadFile("Launcher/index.html");
+mainWindow.loadFile(path.join(__dirname, "Launcher", "index.html"));
 });
 ipcMain.on("start-game", () => {
     if (gameProcess !== null) {
@@ -57,12 +60,12 @@ ipcMain.on("start-game", () => {
     return;
 }
     gameProcess = spawn(
-        "D:/Hello world/SnakeGame/build/SnakeGame.exe",
-        [String(bestScore)],
-        {
-            cwd: "D:/Hello world/SnakeGame/build",
-            stdio: ["ignore","pipe","pipe"]
-        }
+    gameExePath,
+    [String(bestScore)],
+    {
+        cwd: path.dirname(gameExePath),
+        stdio: ["ignore","pipe","pipe"]
+    }
     );
     gameProcess.on("error", (error) => {
     console.error("游戏启动失败：", error);
